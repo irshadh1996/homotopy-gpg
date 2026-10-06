@@ -68,6 +68,12 @@ if __name__ == "__main__":
         N_players, current_robot_locations, x_goals, current_theta_0)
     N = int(N_raw[0] if isinstance(N_raw, (tuple, list, np.ndarray)) else N_raw)
     ocp_solver = solver_creator(ocp)
+        # Number of top-ranked joint homotopy combinations solved per step, by number of players
+    N_TOP_BY_PLAYERS = {3: 3, 4: 8, 5: 22}
+    if N_players not in N_TOP_BY_PLAYERS:
+        raise ValueError(f"No top-k value defined for N_players={N_players}; "
+                         f"supported: {list(N_TOP_BY_PLAYERS)}")
+    N_TOP = N_TOP_BY_PLAYERS[N_players]
     max_iterations = 770
     metadata = {
         "schema_version": "1.1",
@@ -102,7 +108,7 @@ if __name__ == "__main__":
     )
     f_met = open(met_path, "w")
     f_met.write(f"# method={METHOD_NAME} instance={instance_idx} "
-                f"N_players={N_players} n_top=12 N_range={max_iterations}\n")
+                f"N_players={N_players} n_top={N_TOP} N_range={max_iterations}\n")
     f_met.write(f"# r_agent={float(o_radius)}\n")
     f_met.write(f"# v_ref={float(vel_ref_0[0])} N_horizon={N} Tf={float(Tf)}\n")
     f_met.write(f"# goals={np.round(np.asarray(x_goals, dtype=float), 4).tolist()}\n")
@@ -171,7 +177,7 @@ if __name__ == "__main__":
         best = None
         n_solved = 0
         n_attempted = 0
-        for i, (idx, comb, _score) in enumerate(ranked_combinations[:4]):
+        for i, (idx, comb, _score) in enumerate(ranked_combinations[:N_TOP]):
             n_attempted += 1
             candidate_hsigs = [hsig for (hsig, _) in comb]
             l_val = 0.0 if previous_best_hsignatures == candidate_hsigs else 1.0
