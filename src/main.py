@@ -68,7 +68,7 @@ if __name__ == "__main__":
         N_players, current_robot_locations, x_goals, current_theta_0)
     N = int(N_raw[0] if isinstance(N_raw, (tuple, list, np.ndarray)) else N_raw)
     ocp_solver = solver_creator(ocp)
-        # Number of top-ranked joint homotopy combinations solved per step, by number of players
+    # Number of top-ranked joint homotopy combinations solved per step, by number of players
     N_TOP_BY_PLAYERS = {3: 3, 4: 8, 5: 22}
     if N_players not in N_TOP_BY_PLAYERS:
         raise ValueError(f"No top-k value defined for N_players={N_players}; "
@@ -208,13 +208,9 @@ if __name__ == "__main__":
         if best is None:
             print(f"ITER {iteration}: No valid OCP solutions found.")
             break
-
-                # Time spent on this step so far, from state measurement to the end of the OCP batch
-        # Artificial delay on every other iteration to test the fallback
         if TEST_DELAY_S > 0.0:
             time.sleep(TEST_DELAY_S)
 
-        # Time spent on this step so far, from state measurement to the end of the OCP batch
         step_elapsed = time.perf_counter() - iter_start
         # Apply the control planned for the time window in which the solve finished
         if step_elapsed < STEP_TIME_LIMIT_S:
