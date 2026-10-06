@@ -1,0 +1,19 @@
+cat > .gitignore << 'EOF'
+# acados generated code
+acados_ocp.json
+c_generated_code*/
+
+# simulation outputs
+results/
+
+# compiled C++ extensions and build files
+*.so
+*.o
+build/
+*.egg-info/
+
+# Python cache
+__pycache__/
+*.pyc
+EOF.vscode/
+.vscode/

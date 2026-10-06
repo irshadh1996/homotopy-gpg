@@ -1,0 +1,43 @@
+<launch>
+  <!-- Arguments for model type and position -->
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  
+  <!-- Robot 1 -->
+  <arg name="x_pos_1" default="-2.0"/>
+  <arg name="y_pos_1" default="0.0"/>
+  <arg name="z_pos_1" default="0.0"/>
+  <arg name="yaw_1" default="0.00"/>
+
+  <!-- Robot 2 -->
+  <arg name="x_pos_2" default="0.0"/>
+  <arg name="y_pos_2" default="-2.0"/>
+  <arg name="z_pos_2" default="0.0"/>
+  <arg name="yaw_2" default="1.57"/>
+  
+   <!-- Robot 3 -->
+  <arg name="x_pos_3" default="0.0"/>
+  <arg name="y_pos_3" default="2.0"/>
+  <arg name="z_pos_3" default="0.0"/>
+  <arg name="yaw_3" default="-1.57"/>
+  
+  <!-- Launch the Gazebo world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/empty.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  <!-- Parameter for robot description (URDF) -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+  <!-- Spawn robots -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_1" 
+        args="-urdf -model turtlebot3_$(arg model)_1 -x $(arg x_pos_1) -y $(arg y_pos_1) -z $(arg z_pos_1) -Y $(arg yaw_1) -param robot_description -robot_namespace robot_1" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_2" 
+        args="-urdf -model turtlebot3_$(arg model)_2 -x $(arg x_pos_2) -y $(arg y_pos_2) -z $(arg z_pos_2) -Y $(arg yaw_2) -param robot_description -robot_namespace robot_2" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_3" 
+        args="-urdf -model turtlebot3_$(arg model)_3 -x $(arg x_pos_3) -y $(arg y_pos_3) -z $(arg z_pos_3) -Y $(arg yaw_3) -param robot_description -robot_namespace robot_3" />
+  <!-- rosbridge websocket server (port 9090) for the Python planner -->
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+</launch>
